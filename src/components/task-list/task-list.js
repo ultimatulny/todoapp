@@ -1,7 +1,7 @@
 import React from "react";
 import Task from "../task";
 
-const TaskList = ({ tasks, removeTask }) => {
+const TaskList = ({ tasks, removeTask, toggleDone }) => {
   const elements = tasks.map((item) => {
     const { ...itemProps } = item;
     return (
@@ -9,6 +9,7 @@ const TaskList = ({ tasks, removeTask }) => {
         {...itemProps}
         key={item.id}
         removeTask={() => removeTask(item.id)}
+        toggleDone={() => toggleDone(item.id)}
       />
     );
   });

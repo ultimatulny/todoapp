@@ -3,26 +3,10 @@ import "./task.css";
 import { formatDistance } from "date-fns";
 
 export default class Task extends React.Component {
-  constructor() {
-    super();
-
-    this.state = {
-      completed: false,
-      edit: false,
-    };
-
-    this.toggleComplete = () => {
-      this.setState((state) => {
-        return {
-          completed: !state.completed,
-        };
-      });
-    };
-  }
-
   render() {
-    const { title, createTime, removeTask } = this.props;
-    const { completed, edit } = this.state;
+    const { title, createTime, removeTask, completed, edit, toggleDone } =
+      this.props;
+
     let style = completed ? "completed" : null;
     style = edit ? "editing" : style;
     const editField = (
@@ -34,7 +18,8 @@ export default class Task extends React.Component {
           <input
             className="toggle"
             type="checkbox"
-            onClick={this.toggleComplete}
+            onClick={toggleDone}
+            defaultChecked={completed}
           />
           <label>
             <span className="description">{title}</span>
