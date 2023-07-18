@@ -39,11 +39,39 @@ export default class App extends React.Component {
       });
     };
 
-    this.toggleDone = (id) => {
+    this.toggleElem = (id, key) => {
       this.setState(({ tasks }) => {
         const idx = tasks.findIndex((el) => el.id === id);
         const oldItem = tasks[idx];
-        const newItem = { ...oldItem, completed: !oldItem.completed };
+        const newItem = { ...oldItem };
+        newItem[key] = !newItem[key];
+        const newArr = [
+          ...tasks.slice(0, idx),
+          newItem,
+          ...tasks.slice(idx + 1),
+        ];
+
+        return {
+          tasks: newArr,
+        };
+      });
+    };
+
+    this.toggleDone = (id) => {
+      this.toggleElem(id, "completed");
+    };
+
+    this.toggleEdit = (id) => {
+      this.toggleElem(id, "edit");
+    };
+
+    this.setNewTitle = (id, title) => {
+      this.setState(({ tasks }) => {
+        const idx = tasks.findIndex((el) => el.id === id);
+        const oldItem = tasks[idx];
+        const newItem = { ...oldItem };
+        newItem.edit = !newItem.edit;
+        newItem.title = title;
         const newArr = [
           ...tasks.slice(0, idx),
           newItem,
@@ -99,6 +127,8 @@ export default class App extends React.Component {
             tasks={currentTasks}
             removeTask={this.removeTask}
             toggleDone={this.toggleDone}
+            toggleEdit={this.toggleEdit}
+            setNewTitle={this.setNewTitle}
           />
           <Footer
             itemsLeft={itemsLeft}
