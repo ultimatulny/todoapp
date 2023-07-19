@@ -8,7 +8,7 @@ export default class NewTaskForm extends React.Component {
     };
     this.sendTaskToAdd = (e) => {
       e.preventDefault();
-      if (this.state.label === "") return;
+      if (this.state.label.trim() === "") return;
       this.props.addTask(this.state.label);
       this.setState({
         label: "",

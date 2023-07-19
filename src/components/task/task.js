@@ -33,12 +33,17 @@ export default class Task extends React.Component {
     };
     this.sendNewTitle = (e) => {
       e.preventDefault();
-      if (e.target.value === "") return;
+      if (this.state.label.trim() === "") return;
       this.props.setNewTitle(this.props.id, this.state.label);
     };
     this.updateState = (e) => {
       this.setState({
         label: e.target.value,
+      });
+    };
+    this.setStateLabelOnEditClick = () => {
+      this.setState({
+        label: this.props.title,
       });
     };
   }
@@ -84,7 +89,13 @@ export default class Task extends React.Component {
               {" ago"}
             </span>
           </label>
-          <button className="icon icon-edit" onClick={toggleEdit}></button>
+          <button
+            className="icon icon-edit"
+            onClick={() => {
+              toggleEdit();
+              this.setStateLabelOnEditClick();
+            }}
+          ></button>
           <button className="icon icon-destroy" onClick={removeTask}></button>
         </div>
         {edit ? editField : null}
