@@ -1,5 +1,6 @@
-import NewTaskForm from "../new-task-form";
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types'
+
+import NewTaskForm from '../new-task-form'
 
 const Header = ({ addTask }) => {
   return (
@@ -7,15 +8,15 @@ const Header = ({ addTask }) => {
       <h1>todos</h1>
       <NewTaskForm addTask={addTask} />
     </header>
-  );
-};
+  )
+}
 
 Header.defaultProps = {
   addTask: () => {},
-};
+}
 
 Header.propTypes = {
   addTask: PropTypes.func,
-};
+}
 
-export default Header;
+export default Header

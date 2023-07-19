@@ -1,16 +1,11 @@
-import React from "react";
-import Task from "../task";
-import PropTypes from "prop-types";
+import React from 'react'
+import PropTypes from 'prop-types'
 
-const TaskList = ({
-  tasks,
-  removeTask,
-  toggleDone,
-  toggleEdit,
-  setNewTitle,
-}) => {
+import Task from '../task'
+
+const TaskList = ({ tasks, removeTask, toggleDone, toggleEdit, setNewTitle }) => {
   const elements = tasks.map((item) => {
-    const { ...itemProps } = item;
+    const { ...itemProps } = item
     return (
       <Task
         {...itemProps}
@@ -20,11 +15,11 @@ const TaskList = ({
         toggleEdit={() => toggleEdit(item.id)}
         setNewTitle={setNewTitle}
       />
-    );
-  });
+    )
+  })
 
-  return <ul className="todo-list">{elements}</ul>;
-};
+  return <ul className="todo-list">{elements}</ul>
+}
 
 TaskList.defaultProps = {
   tasks: [],
@@ -32,7 +27,7 @@ TaskList.defaultProps = {
   toggleDone: () => {},
   toggleEdit: () => {},
   setNewTitle: () => {},
-};
+}
 
 TaskList.propTypes = {
   tasks: PropTypes.array,
@@ -40,6 +35,6 @@ TaskList.propTypes = {
   toggleDone: PropTypes.func,
   toggleEdit: PropTypes.func,
   setNewTitle: PropTypes.func,
-};
+}
 
-export default TaskList;
+export default TaskList

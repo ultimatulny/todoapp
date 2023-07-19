@@ -1,24 +1,24 @@
-import React from "react";
+import React from 'react'
 
 export default class NewTaskForm extends React.Component {
   constructor() {
-    super();
+    super()
     this.state = {
-      label: "",
-    };
+      label: '',
+    }
     this.sendTaskToAdd = (e) => {
-      e.preventDefault();
-      if (this.state.label.trim() === "") return;
-      this.props.addTask(this.state.label);
+      e.preventDefault()
+      if (this.state.label.trim() === '') return
+      this.props.addTask(this.state.label)
       this.setState({
-        label: "",
-      });
-    };
+        label: '',
+      })
+    }
     this.updateState = (e) => {
       this.setState({
         label: e.target.value,
-      });
-    };
+      })
+    }
   }
 
   render() {
@@ -32,6 +32,6 @@ export default class NewTaskForm extends React.Component {
           onChange={this.updateState}
         />
       </form>
-    );
+    )
   }
 }
