@@ -11,92 +11,92 @@ export default class App extends React.Component {
   constructor() {
     super()
 
-    this.createTask = (title) => {
-      this.globalId++
-      return {
-        id: this.globalId,
-        title,
-        createTime: Date.now(),
-        completed: false,
-        edit: false,
-      }
-    }
-
     this.state = {
       tasks: [this.createTask('Проснуться'), this.createTask('Улыбнуться'), this.createTask('Изучать React')],
       filter: 'All',
     }
+  }
 
-    this.removeTask = (id) => {
-      this.setState(({ tasks }) => {
-        const idx = tasks.findIndex((el) => el.id === id)
-        const newArr = [...tasks.slice(0, idx), ...tasks.slice(idx + 1)]
-        return {
-          tasks: newArr,
-        }
-      })
+  createTask = (title) => {
+    this.globalId++
+    return {
+      id: this.globalId,
+      title,
+      createTime: Date.now(),
+      completed: false,
+      edit: false,
     }
+  }
 
-    this.toggleElem = (id, key) => {
-      this.setState(({ tasks }) => {
-        const idx = tasks.findIndex((el) => el.id === id)
-        const oldItem = tasks[idx]
-        const newItem = { ...oldItem }
-        newItem[key] = !newItem[key]
-        const newArr = [...tasks.slice(0, idx), newItem, ...tasks.slice(idx + 1)]
+  removeTask = (id) => {
+    this.setState(({ tasks }) => {
+      const idx = tasks.findIndex((el) => el.id === id)
+      const newArr = [...tasks.slice(0, idx), ...tasks.slice(idx + 1)]
+      return {
+        tasks: newArr,
+      }
+    })
+  }
 
-        return {
-          tasks: newArr,
-        }
-      })
-    }
+  toggleElem = (id, key) => {
+    this.setState(({ tasks }) => {
+      const idx = tasks.findIndex((el) => el.id === id)
+      const oldItem = tasks[idx]
+      const newItem = { ...oldItem }
+      newItem[key] = !newItem[key]
+      const newArr = [...tasks.slice(0, idx), newItem, ...tasks.slice(idx + 1)]
 
-    this.toggleDone = (id) => {
-      this.toggleElem(id, 'completed')
-    }
+      return {
+        tasks: newArr,
+      }
+    })
+  }
 
-    this.toggleEdit = (id) => {
-      this.toggleElem(id, 'edit')
-    }
+  toggleDone = (id) => {
+    this.toggleElem(id, 'completed')
+  }
 
-    this.setNewTitle = (id, title) => {
-      this.setState(({ tasks }) => {
-        const idx = tasks.findIndex((el) => el.id === id)
-        const oldItem = tasks[idx]
-        const newItem = { ...oldItem }
-        newItem.edit = !newItem.edit
-        newItem.title = title
-        const newArr = [...tasks.slice(0, idx), newItem, ...tasks.slice(idx + 1)]
+  toggleEdit = (id) => {
+    this.toggleElem(id, 'edit')
+  }
 
-        return {
-          tasks: newArr,
-        }
-      })
-    }
+  setNewTitle = (id, title) => {
+    this.setState(({ tasks }) => {
+      const idx = tasks.findIndex((el) => el.id === id)
+      const oldItem = tasks[idx]
+      const newItem = { ...oldItem }
+      newItem.edit = !newItem.edit
+      newItem.title = title
+      const newArr = [...tasks.slice(0, idx), newItem, ...tasks.slice(idx + 1)]
 
-    this.addTask = (title) => {
-      this.setState(({ tasks }) => {
-        const newArr = [...tasks, this.createTask(title)]
-        return {
-          tasks: newArr,
-        }
-      })
-    }
+      return {
+        tasks: newArr,
+      }
+    })
+  }
 
-    this.changeFilter = (newFilter) => {
-      this.setState({
-        filter: newFilter,
-      })
-    }
+  addTask = (title) => {
+    this.setState(({ tasks }) => {
+      const newArr = [...tasks, this.createTask(title)]
+      return {
+        tasks: newArr,
+      }
+    })
+  }
 
-    this.clearCompleted = () => {
-      this.setState(({ tasks }) => {
-        const newArr = tasks.filter((el) => !el.completed)
-        return {
-          tasks: newArr,
-        }
-      })
-    }
+  changeFilter = (newFilter) => {
+    this.setState({
+      filter: newFilter,
+    })
+  }
+
+  clearCompleted = () => {
+    this.setState(({ tasks }) => {
+      const newArr = tasks.filter((el) => !el.completed)
+      return {
+        tasks: newArr,
+      }
+    })
   }
 
   render() {

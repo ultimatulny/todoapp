@@ -6,19 +6,20 @@ export default class NewTaskForm extends React.Component {
     this.state = {
       label: '',
     }
-    this.sendTaskToAdd = (e) => {
-      e.preventDefault()
-      if (this.state.label.trim() === '') return
-      this.props.addTask(this.state.label)
-      this.setState({
-        label: '',
-      })
-    }
-    this.updateState = (e) => {
-      this.setState({
-        label: e.target.value,
-      })
-    }
+  }
+
+  sendTaskToAdd = (e) => {
+    e.preventDefault()
+    if (this.state.label.trim() === '') return
+    this.props.addTask(this.state.label.trim())
+    this.setState({
+      label: '',
+    })
+  }
+  updateState = (e) => {
+    this.setState({
+      label: e.target.value,
+    })
   }
 
   render() {
@@ -30,6 +31,7 @@ export default class NewTaskForm extends React.Component {
           autoFocus
           value={this.state.label}
           onChange={this.updateState}
+          required
         />
       </form>
     )

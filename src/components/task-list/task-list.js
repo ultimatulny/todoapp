@@ -6,15 +6,19 @@ import Task from '../task'
 const TaskList = ({ tasks, removeTask, toggleDone, toggleEdit, setNewTitle }) => {
   const elements = tasks.map((item) => {
     const { ...itemProps } = item
+    let style = item.completed ? 'completed' : null
+    style = item.edit ? 'editing' : style
+
     return (
-      <Task
-        {...itemProps}
-        key={item.id}
-        removeTask={() => removeTask(item.id)}
-        toggleDone={() => toggleDone(item.id)}
-        toggleEdit={() => toggleEdit(item.id)}
-        setNewTitle={setNewTitle}
-      />
+      <li className={style} key={item.id}>
+        <Task
+          {...itemProps}
+          removeTask={() => removeTask(item.id)}
+          toggleDone={() => toggleDone(item.id)}
+          toggleEdit={() => toggleEdit(item.id)}
+          setNewTitle={setNewTitle}
+        />
+      </li>
     )
   })
 

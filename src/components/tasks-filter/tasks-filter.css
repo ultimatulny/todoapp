@@ -1,0 +1,30 @@
+.filters input[type='radio'] {
+  display: none;
+}
+
+.filters label {
+  padding: 5px 15px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+}
+
+.filters input[type='radio']:checked + label {
+  display: inline-block;
+  color: inherit;
+  padding: 3px 7px;
+  margin: 3px;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  border-color: rgba(175, 47, 47, 0.2);
+}
+
+.filters input[type='radio']:not(:checked) + label:hover {
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  border-color: rgba(175, 47, 47, 0.1);
+}
+.filters li label {
+  padding: 5px 10px;
+}

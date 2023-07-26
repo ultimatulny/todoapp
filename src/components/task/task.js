@@ -30,35 +30,48 @@ export default class Task extends React.Component {
     super()
     this.state = {
       label: '',
+      currentTime: new Date(),
     }
-    this.sendNewTitle = (e) => {
-      e.preventDefault()
-      if (this.state.label.trim() === '') return
-      this.props.setNewTitle(this.props.id, this.state.label)
-    }
-    this.updateState = (e) => {
-      this.setState({
-        label: e.target.value.trim(),
-      })
-    }
-    this.setStateLabelOnEditClick = () => {
-      this.setState({
-        label: this.props.title,
-      })
-    }
+    this.timer = null
   }
+
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      this.setState({
+        currentTime: new Date(),
+      })
+    }, 60000)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer)
+  }
+
+  sendNewTitle = (e) => {
+    e.preventDefault()
+    if (this.state.label.trim() === '') return
+    this.props.setNewTitle(this.props.id, this.state.label)
+  }
+  updateState = (e) => {
+    this.setState({
+      label: e.target.value.trim(),
+    })
+  }
+  setStateLabelOnEditClick = () => {
+    this.setState({
+      label: this.props.title,
+    })
+  }
+
   render() {
     const { title, createTime, removeTask, completed, edit, toggleDone, toggleEdit } = this.props
-
-    let style = completed ? 'completed' : null
-    style = edit ? 'editing' : style
     const editField = (
       <form onSubmit={this.sendNewTitle}>
         <input type="text" className="edit" defaultValue={title} onChange={this.updateState} />
       </form>
     )
     return (
-      <li className={style}>
+      <>
         <div className="view">
           <input className="toggle" type="checkbox" onClick={toggleDone} defaultChecked={completed} />
           <label>
@@ -81,7 +94,7 @@ export default class Task extends React.Component {
           <button className="icon icon-destroy" onClick={removeTask}></button>
         </div>
         {edit ? editField : null}
-      </li>
+      </>
     )
   }
 }
