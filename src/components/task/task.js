@@ -1,6 +1,6 @@
 import React from 'react'
 import './task.css'
-import { formatDistanceToNow } from 'date-fns'
+import { formatDistanceToNow, format } from 'date-fns'
 import PropTypes from 'prop-types'
 
 export default class Task extends React.Component {
@@ -13,6 +13,7 @@ export default class Task extends React.Component {
     edit: false,
     toggleDone: () => {},
     toggleEdit: () => {},
+    timerSeconds: 0,
   }
 
   static propTypes = {
@@ -24,6 +25,7 @@ export default class Task extends React.Component {
     edit: PropTypes.bool,
     toggleDone: PropTypes.func,
     toggleEdit: PropTypes.func,
+    timerSeconds: PropTypes.number,
   }
 
   constructor() {
@@ -31,8 +33,10 @@ export default class Task extends React.Component {
     this.state = {
       label: '',
       currentTime: new Date(),
+      timerSeconds: 0,
     }
     this.timer = null
+    this.taskTimer = null
   }
 
   componentDidMount() {
@@ -41,10 +45,14 @@ export default class Task extends React.Component {
         currentTime: new Date(),
       })
     }, 60000)
+    this.setState({
+      timerSeconds: this.props.timerSeconds,
+    })
   }
 
   componentWillUnmount() {
     clearInterval(this.timer)
+    clearInterval(this.taskTimer)
   }
 
   sendNewTitle = (e) => {
@@ -63,6 +71,27 @@ export default class Task extends React.Component {
     })
   }
 
+  startTimer = () => {
+    if (this.taskTimer || this.state.timerSeconds === 0) return
+
+    this.taskTimer = setInterval(() => {
+      if (this.state.timerSeconds === 0) {
+        clearInterval(this.taskTimer)
+        return
+      }
+      this.setState(({ timerSeconds }) => {
+        return {
+          timerSeconds: timerSeconds - 1,
+        }
+      })
+    }, 1000)
+  }
+
+  pauseTimer = () => {
+    clearInterval(this.taskTimer)
+    this.taskTimer = null
+  }
+
   render() {
     const { title, createTime, removeTask, completed, edit, toggleDone, toggleEdit } = this.props
     const editField = (
@@ -76,6 +105,14 @@ export default class Task extends React.Component {
           <input className="toggle" type="checkbox" onClick={toggleDone} defaultChecked={completed} />
           <label>
             <span className="description">{title}</span>
+            <span className="timer">
+              <button className="icon icon-play" onClick={this.startTimer}></button>
+              <button className="icon icon-pause" onClick={this.pauseTimer}></button>
+              {format(
+                new Date().setMinutes(Math.floor(this.state.timerSeconds / 60), this.state.timerSeconds % 60),
+                'mm:ss'
+              )}
+            </span>
             <span className="created">
               {'created '}
               {formatDistanceToNow(createTime, new Date(), {

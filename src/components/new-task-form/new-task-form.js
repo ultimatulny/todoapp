@@ -1,38 +1,71 @@
 import React from 'react'
 
+import './new-task-form.css'
+
 export default class NewTaskForm extends React.Component {
   constructor() {
     super()
     this.state = {
-      label: '',
+      taskLabel: '',
+      minutes: '',
+      seconds: '',
     }
   }
 
   sendTaskToAdd = (e) => {
     e.preventDefault()
-    if (this.state.label.trim() === '') return
-    this.props.addTask(this.state.label.trim())
+    if (this.state.taskLabel.trim() === '') return
+    this.props.addTask(this.state)
     this.setState({
-      label: '',
+      taskLabel: '',
+      minutes: '',
+      seconds: '',
     })
   }
   updateState = (e) => {
     this.setState({
-      label: e.target.value,
+      [e.target.name]: e.target.value,
     })
   }
 
   render() {
     return (
-      <form onSubmit={this.sendTaskToAdd}>
+      <form onSubmit={this.sendTaskToAdd} className="new-todo-form">
         <input
           className="new-todo"
-          placeholder="What needs to be done?"
+          placeholder="Task"
           autoFocus
-          value={this.state.label}
+          value={this.state.taskLabel}
           onChange={this.updateState}
           required
+          type="text"
+          name="taskLabel"
+          autoComplete="off"
         />
+        <input
+          className="new-todo-form__timer"
+          value={this.state.minutes}
+          onChange={this.updateState}
+          placeholder="Min"
+          required
+          type="number"
+          name="minutes"
+          min="0"
+          autoComplete="off"
+        />
+        <input
+          className="new-todo-form__timer"
+          value={this.state.seconds}
+          onChange={this.updateState}
+          placeholder="Sec"
+          required
+          type="number"
+          name="seconds"
+          max="59"
+          min="0"
+          autoComplete="off"
+        />
+        <button type="submit" />
       </form>
     )
   }

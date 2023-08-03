@@ -93,7 +93,6 @@ body {
 .edit {
   position: relative;
   margin: 0;
-  width: 100%;
   font-size: 24px;
   font-family: inherit;
   font-weight: inherit;
@@ -118,6 +117,11 @@ body {
   position: relative;
   z-index: 2;
   border-top: 1px solid #e6e6e6;
+}
+
+.new-todo-form {
+  display: flex;
+  margin-bottom: 0;
 }
 
 .toggle-all {
@@ -244,14 +248,11 @@ body {
 }
 
 .todo-list li .icon {
-  position: absolute;
-  top: 0;
-  bottom: -3px;
   width: 30px;
   height: 40px;
   font-size: 34px;
   color: #cc9a9a;
-  margin: auto 0 11px;
+  margin: auto 0;
   transition: color 0.2s ease-out;
   cursor: pointer;
 }
@@ -261,6 +262,9 @@ body {
 }
 
 .todo-list li .icon-destroy {
+  position: absolute;
+  top: 0;
+  bottom: -3px;
   right: 10px;
 }
 
@@ -269,6 +273,9 @@ body {
 }
 
 .todo-list li .icon-edit {
+  position: absolute;
+  top: 0;
+  bottom: -3px;
   font-size: 19px;
   right: 45px;
 }
@@ -283,6 +290,25 @@ body {
 
 .todo-list li.editing:last-child {
   margin-bottom: -1px;
+}
+
+.todo-list li .icon-pause,
+.todo-list li .icon-play {
+  font-size: 18px;
+  width: 25px;
+  height: 18px;
+}
+
+.todo-list li .icon-play {
+  font-size: 15px;
+}
+
+.icon-pause:after {
+  content: '⏸';
+}
+
+.icon-play:after {
+  content: '▶';
 }
 
 .footer {

@@ -12,12 +12,12 @@ export default class App extends React.Component {
     super()
 
     this.state = {
-      tasks: [this.createTask('Проснуться'), this.createTask('Улыбнуться'), this.createTask('Изучать React')],
+      tasks: [this.createTask('Task', 60), this.createTask('Test', 150), this.createTask('123', 9000)],
       filter: 'All',
     }
   }
 
-  createTask = (title) => {
+  createTask = (title, timerSeconds = 0) => {
     this.globalId++
     return {
       id: this.globalId,
@@ -25,6 +25,7 @@ export default class App extends React.Component {
       createTime: Date.now(),
       completed: false,
       edit: false,
+      timerSeconds: timerSeconds,
     }
   }
 
@@ -75,9 +76,11 @@ export default class App extends React.Component {
     })
   }
 
-  addTask = (title) => {
+  addTask = (taskObj) => {
+    const { taskLabel, minutes, seconds } = taskObj
+    const timerSeconds = +minutes * 60 + +seconds
     this.setState(({ tasks }) => {
-      const newArr = [...tasks, this.createTask(title)]
+      const newArr = [...tasks, this.createTask(taskLabel, timerSeconds)]
       return {
         tasks: newArr,
       }
