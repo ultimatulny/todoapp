@@ -1,137 +1,144 @@
-import React from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './task.css'
 import { formatDistanceToNow, format } from 'date-fns'
 import PropTypes from 'prop-types'
 
-export default class Task extends React.Component {
-  static defaultProps = {
-    id: 1,
-    title: 'Задача',
-    createTime: new Date(),
-    removeTask: () => {},
-    completed: false,
-    edit: false,
-    toggleDone: () => {},
-    toggleEdit: () => {},
+const Task = (props) => {
+  const [state, setState] = useState({
+    label: '',
+    currentTime: new Date(),
     timerSeconds: 0,
-  }
+  })
 
-  static propTypes = {
-    id: PropTypes.number,
-    title: PropTypes.string,
-    createTime: PropTypes.number,
-    removeTask: PropTypes.func,
-    completed: PropTypes.bool,
-    edit: PropTypes.bool,
-    toggleDone: PropTypes.func,
-    toggleEdit: PropTypes.func,
-    timerSeconds: PropTypes.number,
-  }
+  const taskTimerRef = useRef(null)
 
-  constructor() {
-    super()
-    this.state = {
-      label: '',
-      currentTime: new Date(),
-      timerSeconds: 0,
-    }
-    this.timer = null
-    this.taskTimer = null
-  }
-
-  componentDidMount() {
-    this.timer = setInterval(() => {
-      this.setState({
-        currentTime: new Date(),
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setState((prevState) => {
+        return {
+          ...prevState,
+          currentTime: new Date(),
+        }
       })
     }, 60000)
-    this.setState({
-      timerSeconds: this.props.timerSeconds,
+
+    setState({
+      ...state,
+      timerSeconds: props.timerSeconds,
     })
-  }
 
-  componentWillUnmount() {
-    clearInterval(this.timer)
-    clearInterval(this.taskTimer)
-  }
+    return () => {
+      clearInterval(timer)
+      clearInterval(taskTimerRef.current)
+    }
+  }, [])
 
-  sendNewTitle = (e) => {
+  const sendNewTitle = (e) => {
     e.preventDefault()
-    if (this.state.label.trim() === '') return
-    this.props.setNewTitle(this.props.id, this.state.label)
+    if (state.label.trim() === '') return
+    props.setNewTitle(props.id, state.label)
   }
-  updateState = (e) => {
-    this.setState({
+
+  const updateState = (e) => {
+    setState({
+      ...state,
       label: e.target.value.trim(),
     })
   }
-  setStateLabelOnEditClick = () => {
-    this.setState({
-      label: this.props.title,
+
+  const setStateLabelOnEditClick = () => {
+    setState({
+      ...state,
+      label: props.title,
     })
   }
 
-  startTimer = () => {
-    if (this.taskTimer || this.state.timerSeconds === 0) return
+  const startTimer = () => {
+    if (taskTimerRef.current || state.timerSeconds === 0) return
 
-    this.taskTimer = setInterval(() => {
-      if (this.state.timerSeconds === 0) {
-        clearInterval(this.taskTimer)
-        return
-      }
-      this.setState(({ timerSeconds }) => {
+    taskTimerRef.current = setInterval(() => {
+      setState((prevState) => {
+        const newTimerSeconds = prevState.timerSeconds - 1
+        if (newTimerSeconds <= 0) {
+          clearInterval(taskTimerRef.current)
+          taskTimerRef.current = null
+        }
         return {
-          timerSeconds: timerSeconds - 1,
+          ...prevState,
+          timerSeconds: newTimerSeconds,
         }
       })
     }, 1000)
   }
 
-  pauseTimer = () => {
-    clearInterval(this.taskTimer)
-    this.taskTimer = null
+  const pauseTimer = () => {
+    clearInterval(taskTimerRef.current)
+    taskTimerRef.current = null
   }
 
-  render() {
-    const { title, createTime, removeTask, completed, edit, toggleDone, toggleEdit } = this.props
-    const editField = (
-      <form onSubmit={this.sendNewTitle}>
-        <input type="text" className="edit" defaultValue={title} onChange={this.updateState} />
-      </form>
-    )
-    return (
-      <>
-        <div className="view">
-          <input className="toggle" type="checkbox" onClick={toggleDone} defaultChecked={completed} />
-          <label>
-            <span className="description">{title}</span>
-            <span className="timer">
-              <button className="icon icon-play" onClick={this.startTimer}></button>
-              <button className="icon icon-pause" onClick={this.pauseTimer}></button>
-              {format(
-                new Date().setMinutes(Math.floor(this.state.timerSeconds / 60), this.state.timerSeconds % 60),
-                'mm:ss'
-              )}
-            </span>
-            <span className="created">
-              {'created '}
-              {formatDistanceToNow(createTime, new Date(), {
-                addSuffix: true,
-              })}
-              {' ago'}
-            </span>
-          </label>
-          <button
-            className="icon icon-edit"
-            onClick={() => {
-              toggleEdit()
-              this.setStateLabelOnEditClick()
-            }}
-          ></button>
-          <button className="icon icon-destroy" onClick={removeTask}></button>
-        </div>
-        {edit ? editField : null}
-      </>
-    )
-  }
+  const { title, createTime, removeTask, completed, edit, toggleDone, toggleEdit } = props
+
+  const editField = (
+    <form onSubmit={sendNewTitle}>
+      <input type="text" className="edit" defaultValue={title} onChange={updateState} />
+    </form>
+  )
+
+  return (
+    <>
+      <div className="view">
+        <input className="toggle" type="checkbox" onClick={toggleDone} defaultChecked={completed} />
+        <label>
+          <span className="description">{title}</span>
+          <span className="timer">
+            <button className="icon icon-play" onClick={startTimer}></button>
+            <button className="icon icon-pause" onClick={pauseTimer}></button>
+            {format(new Date().setMinutes(Math.floor(state.timerSeconds / 60), state.timerSeconds % 60), 'mm:ss')}
+          </span>
+          <span className="created">
+            {'created '}
+            {formatDistanceToNow(createTime, new Date(), {
+              addSuffix: true,
+            })}
+            {' ago'}
+          </span>
+        </label>
+        <button
+          className="icon icon-edit"
+          onClick={() => {
+            toggleEdit()
+            setStateLabelOnEditClick()
+          }}
+        ></button>
+        <button className="icon icon-destroy" onClick={removeTask}></button>
+      </div>
+      {edit ? editField : null}
+    </>
+  )
 }
+
+Task.defaultProps = {
+  id: 1,
+  title: 'Задача',
+  createTime: new Date(),
+  removeTask: () => {},
+  completed: false,
+  edit: false,
+  toggleDone: () => {},
+  toggleEdit: () => {},
+  timerSeconds: 0,
+}
+
+Task.propTypes = {
+  id: PropTypes.number,
+  title: PropTypes.string,
+  createTime: PropTypes.number,
+  removeTask: PropTypes.func,
+  completed: PropTypes.bool,
+  edit: PropTypes.bool,
+  toggleDone: PropTypes.func,
+  toggleEdit: PropTypes.func,
+  timerSeconds: PropTypes.number,
+}
+
+export default Task

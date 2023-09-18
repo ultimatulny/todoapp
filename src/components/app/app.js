@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import Header from '../header'
 import TaskList from '../task-list'
@@ -6,21 +6,12 @@ import Footer from '../footer'
 
 import './app.css'
 
-export default class App extends React.Component {
-  globalId = 0
-  constructor() {
-    super()
-
-    this.state = {
-      tasks: [this.createTask('Task', 60), this.createTask('Test', 150), this.createTask('123', 9000)],
-      filter: 'All',
-    }
-  }
-
-  createTask = (title, timerSeconds = 0) => {
-    this.globalId++
+const App = () => {
+  let globalId = 0
+  const createTask = (title, timerSeconds = 0) => {
+    globalId++
     return {
-      id: this.globalId,
+      id: globalId,
       title,
       createTime: Date.now(),
       completed: false,
@@ -28,41 +19,39 @@ export default class App extends React.Component {
       timerSeconds: timerSeconds,
     }
   }
+  const [tasks, setTasks] = useState([createTask('Task', 60), createTask('Test', 150), createTask('123', 9000)])
+  const [filter, setFilter] = useState('All')
 
-  removeTask = (id) => {
-    this.setState(({ tasks }) => {
+  const removeTask = (id) => {
+    setTasks((tasks) => {
       const idx = tasks.findIndex((el) => el.id === id)
       const newArr = [...tasks.slice(0, idx), ...tasks.slice(idx + 1)]
-      return {
-        tasks: newArr,
-      }
+      return newArr
     })
   }
 
-  toggleElem = (id, key) => {
-    this.setState(({ tasks }) => {
+  const toggleElem = (id, key) => {
+    setTasks((tasks) => {
       const idx = tasks.findIndex((el) => el.id === id)
       const oldItem = tasks[idx]
       const newItem = { ...oldItem }
       newItem[key] = !newItem[key]
       const newArr = [...tasks.slice(0, idx), newItem, ...tasks.slice(idx + 1)]
 
-      return {
-        tasks: newArr,
-      }
+      return newArr
     })
   }
 
-  toggleDone = (id) => {
-    this.toggleElem(id, 'completed')
+  const toggleDone = (id) => {
+    toggleElem(id, 'completed')
   }
 
-  toggleEdit = (id) => {
-    this.toggleElem(id, 'edit')
+  const toggleEdit = (id) => {
+    toggleElem(id, 'edit')
   }
 
-  setNewTitle = (id, title) => {
-    this.setState(({ tasks }) => {
+  const setNewTitle = (id, title) => {
+    setTasks((tasks) => {
       const idx = tasks.findIndex((el) => el.id === id)
       const oldItem = tasks[idx]
       const newItem = { ...oldItem }
@@ -70,67 +59,55 @@ export default class App extends React.Component {
       newItem.title = title
       const newArr = [...tasks.slice(0, idx), newItem, ...tasks.slice(idx + 1)]
 
-      return {
-        tasks: newArr,
-      }
+      return newArr
     })
   }
 
-  addTask = (taskObj) => {
+  const addTask = (taskObj) => {
     const { taskLabel, minutes, seconds } = taskObj
     const timerSeconds = +minutes * 60 + +seconds
-    this.setState(({ tasks }) => {
-      const newArr = [...tasks, this.createTask(taskLabel, timerSeconds)]
-      return {
-        tasks: newArr,
-      }
+
+    setTasks((tasks) => {
+      const newArr = [...tasks, createTask(taskLabel, timerSeconds)]
+      return newArr
     })
   }
 
-  changeFilter = (newFilter) => {
-    this.setState({
-      filter: newFilter,
-    })
+  const changeFilter = (newFilter) => {
+    setFilter(newFilter)
   }
 
-  clearCompleted = () => {
-    this.setState(({ tasks }) => {
+  const clearCompleted = () => {
+    setTasks((tasks) => {
       const newArr = tasks.filter((el) => !el.completed)
-      return {
-        tasks: newArr,
-      }
+      return newArr
     })
   }
 
-  render() {
-    const itemsLeft = this.state.tasks.filter((el) => !el.completed).length
-    const filter = this.state.filter
-    let currentTasks = this.state.tasks
-    if (filter === 'Active') {
-      currentTasks = currentTasks.filter((el) => !el.completed)
-    } else if (filter === 'Completed') {
-      currentTasks = currentTasks.filter((el) => el.completed)
-    }
+  const itemsLeft = tasks.filter((el) => !el.completed).length
 
-    return (
-      <section className="todoapp">
-        <Header addTask={this.addTask} />
-        <section className="main">
-          <TaskList
-            tasks={currentTasks}
-            removeTask={this.removeTask}
-            toggleDone={this.toggleDone}
-            toggleEdit={this.toggleEdit}
-            setNewTitle={this.setNewTitle}
-          />
-          <Footer
-            itemsLeft={itemsLeft}
-            filter={filter}
-            changeFilter={this.changeFilter}
-            clearCompleted={this.clearCompleted}
-          />
-        </section>
-      </section>
-    )
+  let currentTasks = tasks
+  if (filter === 'Active') {
+    currentTasks = currentTasks.filter((el) => !el.completed)
+  } else if (filter === 'Completed') {
+    currentTasks = currentTasks.filter((el) => el.completed)
   }
+
+  return (
+    <section className="todoapp">
+      <Header addTask={addTask} />
+      <section className="main">
+        <TaskList
+          tasks={currentTasks}
+          removeTask={removeTask}
+          toggleDone={toggleDone}
+          toggleEdit={toggleEdit}
+          setNewTitle={setNewTitle}
+        />
+        <Footer itemsLeft={itemsLeft} filter={filter} changeFilter={changeFilter} clearCompleted={clearCompleted} />
+      </section>
+    </section>
+  )
 }
+
+export default App
